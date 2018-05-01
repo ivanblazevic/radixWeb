@@ -22,6 +22,7 @@ enum Plugin {
 })
 export class AppComponent implements OnInit {
 
+  version = "0.11";
   radixUrl = "https://radix.local:8009";
   items = [];
   info: Info = { title: null, volume: 0, version: "" };
@@ -76,10 +77,14 @@ export class AppComponent implements OnInit {
         if (this.plugin == Plugin.Stations) {
           this.searchStations(value);
         }
+        if (this.plugin == Plugin.GoogleMusic) {
+          this.searchGoogleMusic(value);
+        }
       }
     );
 
     this.init(this.plugin);
+    this.saveConfig();
   }
 
   init(plugin: Plugin): void {
@@ -154,6 +159,15 @@ export class AppComponent implements OnInit {
     })
   }
 
+  searchGoogleMusic(query: string): void {
+    if (!query) {
+      return;
+    }
+    this.sharedService.searchGoogleMusic(query.replace(" ", "+")).subscribe(res => {
+      this.items = <any[]>res;
+    })
+  }
+
   play(value: any): void {
     this.items.forEach(i => i.isActive = false); // reset all active
     value.isActive = true;
@@ -170,6 +184,14 @@ export class AppComponent implements OnInit {
     if (this.isRadio()) {
       this.http.get(this.radixUrl + "/play?url=" + value.url + "&title=" + value.title).subscribe(res => {
         this.info.title = value.title
+      }, err => {
+        alert(JSON.stringify(err));
+      })
+    }
+
+    if (this.isGoogleMusic()) {
+      this.http.get(this.radixUrl + "/gplay?id=" + value.id).subscribe(res => {
+        this.info.title = value.artist + " - " +  value.title
       }, err => {
         alert(JSON.stringify(err));
       })
@@ -199,8 +221,8 @@ export class AppComponent implements OnInit {
 
   saveConfig(): void {
     this.sharedService.saveConfig({ 
-      googleUsername: this.info.googleUsername,
-      googlePassword: this.info.googlePassword 
+      googleUsername: "faciron@gmail.com",
+      googlePassword: "$$$$sev82bsv1234"
     }).subscribe(res => {
       console.log(res);
     }, err => {

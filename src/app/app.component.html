@@ -10,6 +10,7 @@
   <button style="position: absolute;right: 10px;" mat-icon-button (click)="snav.toggle()">
     <mat-icon *ngIf="isYouTube()">account_circle</mat-icon>
     <mat-icon *ngIf="isRadio()">radio</mat-icon>
+    <mat-icon *ngIf="isGoogleMusic()">library_music</mat-icon>
   </button>
 </mat-toolbar>
 
@@ -18,6 +19,7 @@
     <mat-nav-list>
       <a mat-list-item (click)="init(Plugin.Stations);snav.toggle()">Stations</a>
       <a mat-list-item (click)="init(Plugin.YouTube);snav.toggle()">YouTube</a>
+      <a mat-list-item (click)="init(Plugin.GoogleMusic);snav.toggle()">GoogleMusic</a>
       <a mat-list-item (click)="showSettings = true;snav.toggle()">Settings</a>
     </mat-nav-list>
   </mat-sidenav>
@@ -31,12 +33,14 @@
             <div style="display: inline-block;vertical-align: top;width: 58%;box-sizing: border-box;">
               <span *ngIf="isYouTube()">{{ item.snippet.title }}</span>
               <div *ngIf="isRadio()"><mat-icon>radio</mat-icon> <span style="vertical-align: super;">{{ item.title }}</span></div>
+              <div *ngIf="isGoogleMusic()"><mat-icon>radio</mat-icon> <span style="vertical-align: super;">{{ item.artist }} {{ item.title }}</span></div>
             </div>
         </div>
       </mat-card>
     </div>
     <div class="result-container" *ngIf="showSettings" style="height: 500px">
 
+      <p><b>App version </b>{{ version }}</p>
       <p><b>Server version </b>{{ info.version }}</p>
 
       <div *ngIf="updateAvailable">

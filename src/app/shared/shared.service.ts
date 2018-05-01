@@ -42,6 +42,10 @@ export class SharedService {
     return this.http.post<Info>(endpoint, {});
   }
 
+  searchGoogleMusic(query: string): Observable<any> {
+    return this.http.get<Info>(this.host + "/gplay/search?search=" + query);
+  }
+
   saveConfig(config: Config): Observable<any> {
     return this.http.post<any>(this.host, config);
   }
