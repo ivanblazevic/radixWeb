@@ -3,13 +3,13 @@
     <mat-icon>menu</mat-icon>
   </button>
 
-  <form [formGroup]="form"> 
-    <mat-form-field class="example-full-width">
-      <input formControlName="queryInput" matInput />
-    </mat-form-field>
+  <form [formGroup]="form">
+    <input formControlName="queryInput" />
   </form>
 
-  <h1></h1>
+  <button mat-icon-button (click)="snav.toggle()">
+    <mat-icon>account_circle</mat-icon>
+  </button>
 </mat-toolbar>
 
 <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 0 : 0">
@@ -20,8 +20,8 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    Results: {{ items.length }}
     <div class="result-container">
+      <p style="margin-bottom: 10px">{{ resultHeaderTitle }}</p>
       <mat-card (click)="play(item)" *ngFor="let item of items">
         <img [src]="item.snippet.thumbnails.medium.url" alt="">
         <div>
@@ -32,6 +32,13 @@
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-<mat-toolbar color="primary" class="info-toolbar">
-  <h3>{{ info ? info.title : '...' }}</h3>
-</mat-toolbar>
+<div style="position: fixed;bottom: 0;width:100%;z-index: 100">
+  <mat-toolbar color="primary" class="info-toolbar">
+    <h3 style="width: 100%;">
+      {{ info ? info.title : '...' }}
+      <a (click)="repeat()" style="float: right;">
+        <mat-icon style="vertical-align: middle;">replay</mat-icon>
+      </a>
+    </h3>
+  </mat-toolbar>
+</div>

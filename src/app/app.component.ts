@@ -21,6 +21,7 @@ export class AppComponent implements OnInit {
     matches: true
   }
   youTube: YouTube;
+  resultHeaderTitle: string;
 
   form = new FormGroup({
     queryInput: new FormControl()
@@ -37,26 +38,33 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.info.title = "Getting info..."
+
+    const lastQuery = localStorage.getItem('query');
+    if (lastQuery) {
+      this.info.title = lastQuery;
+      this.searchYoutube(this.info.title);
+      this.form.get("queryInput").setValue(this.info.title);
+    }
+
     this.sharedService.getInfo().subscribe(res => {
       this.info = res;
       if (!this.info.title) {
         this.info.title = "No title info";
       }
     });
+    
     this.form.get("queryInput").valueChanges.pipe(debounce(() => timer(1000))).subscribe(
       (value: string) => {
-        this.searchYoutube(value).subscribe(items => {
-          this.ngZone.run(() => {
-            this.items = items;
-          });
-        })
+        this.searchYoutube(value);
       }
     );
   }
 
-  searchYoutube(query: string): Observable<any> {
-    return new Observable(observer => {
-      this.youTube.search(encodeURI(query), 50, function (error, result) {
+  searchYoutube(query: string): void{
+    this.resultHeaderTitle = "Searching...";
+
+    const o = new Observable(observer => {
+      this.youTube.search(query.replace(" ", "+"), 50, function (error, result) {
         if (error) {
           observer.error(error)
         } else {
@@ -65,14 +73,26 @@ export class AppComponent implements OnInit {
         observer.complete();
       });
     })
+
+    o.subscribe(items => {
+      this.ngZone.run(() => {
+        this.items = <any[]>items;
+        this.items = this.items.filter(i => i.id.videoId); // filter only videos (not channels in results)
+        localStorage.setItem('query', query);
+        this.resultHeaderTitle = "Results:" + this.items.length;
+      });
+    })
   }
 
-  play(value: any) {
+  play(value: any): void {
     this.info.title = "In progress..."
     this.http.get(this.radixUrl + "/youtube?id=" + value.id.videoId, {}).subscribe(res => {
-      console.log(res);
       this.info.title = value.snippet.title
-    })
+    }, err => alert)
+  }
+
+  repeat(): void {
+    console.log("should repeat")
   }
 
 }
