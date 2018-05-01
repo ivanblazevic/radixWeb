@@ -6,6 +6,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod",
+    "dist": "ng build --prod --base href .",
     "publish": "angular-cli-ghpages --repo=https://github.com/ivanblazevic/radixWeb.git --name=blaz --email=iblazevi@gamil.com --no-silent",
     "test": "ng test",
     "lint": "ng lint",
