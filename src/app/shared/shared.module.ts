@@ -9,12 +9,17 @@ import {
   MatToolbarModule,
   MatNavList,
   MatListModule,
-  MatCardModule
+  MatCardModule,
+  MatFormFieldModule,
+  MatInputModule
 } from '@angular/material';
+import { SharedService } from './shared.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     MatButtonModule,
     MatCheckboxModule,
     MatSidenavModule,
@@ -22,9 +27,13 @@ import {
     MatIconModule,
     MatToolbarModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule
   ],
   exports: [
+    FormsModule,
     MatButtonModule,
     MatCheckboxModule,
     MatSidenavModule,
@@ -32,8 +41,12 @@ import {
     MatIconModule,
     MatToolbarModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule
   ],
+  providers: [SharedService],
   declarations: []
 })
 export class SharedModule { }
