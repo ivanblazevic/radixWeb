@@ -11,7 +11,8 @@ import {
   MatListModule,
   MatCardModule,
   MatFormFieldModule,
-  MatInputModule
+  MatInputModule,
+  MatSliderModule
 } from '@angular/material';
 import { SharedService } from './shared.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -30,6 +31,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSliderModule,
     ReactiveFormsModule
   ],
   exports: [
@@ -44,6 +46,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSliderModule,
     ReactiveFormsModule
   ],
   providers: [SharedService],

@@ -7,6 +7,8 @@ import { timer } from 'rxjs/observable/timer';
 import { SharedService, Info } from './shared/shared.service';
 import { FormControl, FormGroup } from '@angular/forms';
 
+import * as compareVersions from "compare-versions";
+
 enum Plugin {
   Stations,
   YouTube,
@@ -22,8 +24,8 @@ export class AppComponent implements OnInit {
 
   radixUrl = "https://radix.local:8009";
   items = [];
-  info: Info = { title: null };
-  showSettings: boolean = false;
+  info: Info = { title: null, volume: 0, version: "" };
+  showSettings: boolean = true;
   mobileQuery = {
     matches: true
   }
@@ -31,6 +33,9 @@ export class AppComponent implements OnInit {
   resultHeaderTitle: string;
   plugin: Plugin;
   Plugin = Plugin;
+
+  updateAvailable: boolean = false;
+  newVersion;
 
   form = new FormGroup({
     queryInput: new FormControl()
@@ -59,6 +64,7 @@ export class AppComponent implements OnInit {
       if (!this.info.title) {
         this.info.title = "No title info";
       }
+      this.checkNewVersion(this.info.version);
       console.log(res);
     });
     
@@ -77,7 +83,6 @@ export class AppComponent implements OnInit {
     this.plugin = plugin;
     localStorage.setItem("plugin", plugin.toString());
     this.items = [];
-    console.log(plugin);
     switch(plugin) {
       case Plugin.Stations: {
         this.resultHeaderTitle = "Getting favorites...";
@@ -144,19 +149,57 @@ export class AppComponent implements OnInit {
     if (this.isYouTube()) {
       this.http.get(this.radixUrl + "/youtube?id=" + value.id.videoId).subscribe(res => {
         this.info.title = value.snippet.title
-      }, err => alert)
+      }, err => {
+        alert(JSON.stringify(err));
+      })
     }
 
     if (this.isRadio()) {
       this.http.get(this.radixUrl + "/play?url=" + value.url + "&title=" + value.title).subscribe(res => {
         this.info.title = value.title
-      }, err => alert)
+      }, err => {
+        alert(JSON.stringify(err));
+      })
     }
 
   }
 
   repeat(): void {
     console.log("should repeat")
+  }
+
+  onVolume(): void {
+    this.sharedService.volume(this.info.volume).subscribe(res => {
+      console.log(res);
+    }, err => {
+      alert(JSON.stringify(err));
+    })
+  }
+
+  onUpdate(): void {
+    this.sharedService.update().subscribe(res => {
+      console.log(res);
+    }, err => {
+      alert(JSON.stringify(err));
+    })
+  }
+
+  saveConfig(): void {
+    this.sharedService.saveConfig({ 
+      googleUsername: this.info.googleUsername,
+      googlePassword: this.info.googlePassword 
+    }).subscribe(res => {
+      console.log(res);
+    }, err => {
+      alert(JSON.stringify(err));
+    })
+  }
+
+  private checkNewVersion(currentVersion: string): void {
+    this.http.get("https://api.github.com/repos/ivanblazevic/radix/releases/latest").subscribe(res => {
+      this.newVersion = res["tag_name"];
+      this.updateAvailable = compareVersions(this.newVersion, currentVersion);
+    })
   }
 
 }

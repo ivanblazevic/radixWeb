@@ -38,9 +38,18 @@
     <div class="result-container" *ngIf="showSettings" style="height: 500px">
 
       <p><b>Server version </b>{{ info.version }}</p>
+
+      <div *ngIf="updateAvailable">
+        <p style="color: red">New update available! Version {{ newVersion }}</p>
+        <button (click)="onUpdate()" mat-raised-button>Update Now</button>
+      </div>
+
       <p><b>Volume </b>{{ info.volume }}</p>
 
       <form>
+
+        <mat-slider [max]="100" [min]="0" [step]="5" (change)="onVolume()" name="volume" class="full-width" [(ngModel)]="info.volume"></mat-slider>
+
         <mat-form-field class="full-width">
           <input matInput placeholder="Google Username" [value]="info.googleUsername">
         </mat-form-field>
@@ -49,7 +58,7 @@
         </mat-form-field>
       </form>
 
-      <button mat-raised-button>Save</button>
+      <button (click)="saveConfig()" mat-raised-button>Save</button>
 
     </div>
   </mat-sidenav-content>
