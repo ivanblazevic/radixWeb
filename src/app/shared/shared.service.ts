@@ -9,7 +9,7 @@ export interface Info {
 @Injectable()
 export class SharedService {
 
-  host: string = "http://192.168.0.16:8080";
+  host: string = "https://radix.local:8009";
 
   constructor(private http: HttpClient) { }
 

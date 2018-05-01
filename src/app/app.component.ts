@@ -14,7 +14,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class AppComponent implements OnInit {
 
-  radixUrl = "https://192.168.0.16:8009";
+  radixUrl = "https://radix.local:8009";
   items = [];
   info: Info = { title: null };
   mobileQuery = {
