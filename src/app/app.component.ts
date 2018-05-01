@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
   radixUrl = "https://radix.local:8009";
   items = [];
   info: Info = { title: null, volume: 0, version: "" };
-  showSettings: boolean = true;
+  showSettings: boolean = false;
   mobileQuery = {
     matches: true
   }
@@ -73,6 +73,9 @@ export class AppComponent implements OnInit {
         if (this.plugin == Plugin.YouTube) {
           this.searchYoutube(value);
         }
+        if (this.plugin == Plugin.Stations) {
+          this.searchStations(value);
+        }
       }
     );
 
@@ -80,6 +83,7 @@ export class AppComponent implements OnInit {
   }
 
   init(plugin: Plugin): void {
+    this.showSettings = false
     this.plugin = plugin;
     localStorage.setItem("plugin", plugin.toString());
     this.items = [];
@@ -111,7 +115,7 @@ export class AppComponent implements OnInit {
     return this.plugin == Plugin.GoogleMusic;
   }
 
-  searchYoutube(query: string): void{
+  searchYoutube(query: string): void {
     if (!query) {
       this.resultHeaderTitle = "Type something...";
       return;
@@ -139,6 +143,15 @@ export class AppComponent implements OnInit {
       });
     })
 
+  }
+
+  searchStations(query: string): void {
+    if (!query) {
+      return;
+    }
+    this.sharedService.searchStations(query).subscribe(res => {
+      console.log(res);
+    })
   }
 
   play(value: any): void {

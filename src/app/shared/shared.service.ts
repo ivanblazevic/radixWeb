@@ -39,7 +39,7 @@ export class SharedService {
 
   searchStations(query: string): Observable<any> {
     const endpoint: string = this.dirble + query + "&token=" + this.dirbleToken;
-    return this.http.get<Info>(endpoint);
+    return this.http.post<Info>(endpoint, {});
   }
 
   saveConfig(config: Config): Observable<any> {
