@@ -7,6 +7,12 @@ import { timer } from 'rxjs/observable/timer';
 import { SharedService, Info } from './shared/shared.service';
 import { FormControl, FormGroup } from '@angular/forms';
 
+enum Plugin {
+  Stations,
+  YouTube,
+  GoogleMusic
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -23,7 +29,8 @@ export class AppComponent implements OnInit {
   }
   youTube: YouTube;
   resultHeaderTitle: string;
-  show = "youtube";
+  plugin: Plugin;
+  Plugin = Plugin;
 
   form = new FormGroup({
     queryInput: new FormControl()
@@ -39,11 +46,11 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.info.title = "Getting info..."
+    this.info.title = "Getting info...";
+    this.plugin = localStorage.getItem("plugin") ? parseInt(localStorage.getItem("plugin")) : Plugin.YouTube;
 
     const lastQuery = localStorage.getItem('query');
     if (lastQuery) {
-      this.searchYoutube(this.info.title);
       this.form.get("queryInput").setValue(lastQuery);
     }
 
@@ -57,19 +64,57 @@ export class AppComponent implements OnInit {
     
     this.form.get("queryInput").valueChanges.pipe(debounce(() => timer(1000))).subscribe(
       (value: string) => {
-        this.searchYoutube(value);
+        if (this.plugin == Plugin.YouTube) {
+          this.searchYoutube(value);
+        }
       }
     );
+
+    this.init(this.plugin);
   }
 
-  onMenuClick(show: string): void {
-    this.show = show;
+  init(plugin: Plugin): void {
+    this.plugin = plugin;
+    localStorage.setItem("plugin", plugin.toString());
+    this.items = [];
+    console.log(plugin);
+    switch(plugin) {
+      case Plugin.Stations: {
+        this.resultHeaderTitle = "Getting favorites...";
+        this.sharedService.getFavorites().subscribe(res => {
+          this.items = res;
+        });
+        break;
+      }
+      case Plugin.YouTube: {
+        this.resultHeaderTitle = "Searching...";
+        this.searchYoutube(this.form.get("queryInput").value);
+        break;
+      }
+    }
+  }
+
+  isYouTube(): boolean {
+    return this.plugin == Plugin.YouTube;
+  }
+
+  isRadio(): boolean {
+    return this.plugin == Plugin.Stations;
+  }
+
+  isGoogleMusic(): boolean {
+    return this.plugin == Plugin.GoogleMusic;
   }
 
   searchYoutube(query: string): void{
+    if (!query) {
+      this.resultHeaderTitle = "Type something...";
+      return;
+    }
+
     this.resultHeaderTitle = "Searching...";
 
-    const o = new Observable(observer => {
+    const o = Observable.create(observer => {
       this.youTube.search(query.replace(" ", "+"), 50, function (error, result) {
         if (error) {
           observer.error(error)
@@ -80,21 +125,34 @@ export class AppComponent implements OnInit {
       });
     })
 
-    o.subscribe(items => {
+    var u = o.subscribe(items => {
       this.ngZone.run(() => {
         this.items = <any[]>items;
         this.items = this.items.filter(i => i.id.videoId); // filter only videos (not channels in results)
         localStorage.setItem('query', query);
-        this.resultHeaderTitle = "Results:" + this.items.length;
+        u.unsubscribe();
       });
     })
+
   }
 
   play(value: any): void {
+    this.items.forEach(i => i.isActive = false); // reset all active
+    value.isActive = true;
     this.info.title = "In progress..."
-    this.http.get(this.radixUrl + "/youtube?id=" + value.id.videoId, {}).subscribe(res => {
-      this.info.title = value.snippet.title
-    }, err => alert)
+
+    if (this.isYouTube()) {
+      this.http.get(this.radixUrl + "/youtube?id=" + value.id.videoId).subscribe(res => {
+        this.info.title = value.snippet.title
+      }, err => alert)
+    }
+
+    if (this.isRadio()) {
+      this.http.get(this.radixUrl + "/play?url=" + value.url + "&title=" + value.title).subscribe(res => {
+        this.info.title = value.title
+      }, err => alert)
+    }
+
   }
 
   repeat(): void {

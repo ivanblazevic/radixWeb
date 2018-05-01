@@ -4,38 +4,38 @@
   </button>
 
   <form id="queryForm" [formGroup]="form">
-    <input formControlName="queryInput" />
+    <input placeholder="Search..." formControlName="queryInput" />
   </form>
 
   <button style="position: absolute;right: 10px;" mat-icon-button (click)="snav.toggle()">
-    <mat-icon>account_circle</mat-icon>
+    <mat-icon *ngIf="isYouTube()">account_circle</mat-icon>
+    <mat-icon *ngIf="isRadio()">radio</mat-icon>
   </button>
 </mat-toolbar>
 
 <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 0 : 0">
   <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
     <mat-nav-list>
-      <a mat-list-item (click)="onMenuClick('stations');snav.toggle()">Stations</a>
-      <a mat-list-item (click)="onMenuClick('youtube');snav.toggle()">YouTube</a>
-      <a mat-list-item (click)="onMenuClick('settings');snav.toggle()">Settings</a>
+      <a mat-list-item (click)="init(Plugin.Stations);snav.toggle();showSettings = false">Stations</a>
+      <a mat-list-item (click)="init(Plugin.YouTube);snav.toggle()">YouTube</a>
+      <a mat-list-item (click)="showSettings = !showSettings;snav.toggle()">Settings</a>
     </mat-nav-list>
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <div class="result-container" *ngIf="show == 'youtube' || show == 'stations'">
+    <div class="result-container" *ngIf="!showSettings">
       <p *ngIf="items.length == 0" style="margin-bottom: 10px">{{ resultHeaderTitle }}</p>
-      <mat-card (click)="play(item)" *ngFor="let item of items">
-        <img style="    width: 40%;
-        box-sizing: border-box;
-        display: inline-block;" [src]="item.snippet.thumbnails.medium.url" alt="">
-        <div style="    display: inline-block;vertical-align: top;
-        width: 58%;
-        box-sizing: border-box;">
-          {{ item.snippet.title }}
+      <mat-card [ngClass]="{ active: item.isActive }" (click)="play(item)" *ngFor="let item of items">
+        <div>
+            <img *ngIf="isYouTube()" style="width: 40%;box-sizing: border-box;display: inline-block;" [src]="item.snippet.thumbnails.medium.url" alt="">
+            <div style="display: inline-block;vertical-align: top;width: 58%;box-sizing: border-box;">
+              <span *ngIf="isYouTube()">{{ item.snippet.title }}</span>
+              <div *ngIf="isRadio()"><mat-icon>radio</mat-icon> <span style="vertical-align: super;">{{ item.title }}</span></div>
+            </div>
         </div>
       </mat-card>
     </div>
-    <div class="result-container" *ngIf="show == 'settings'" style="height: 500px">
+    <div class="result-container" *ngIf="showSettings" style="height: 500px">
 
       <p><b>Server version </b>{{ info.version }}</p>
       <p><b>Volume </b>{{ info.volume }}</p>
