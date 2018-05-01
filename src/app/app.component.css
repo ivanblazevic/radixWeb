@@ -6,13 +6,14 @@ mat-card {
     margin-bottom: 10px;
 }
 
-form {
-    width: 100%;
+#queryForm {
     margin: 0 5%;
+    width: 58%;
+    margin-left: 14%;
+    position: absolute;
 }
 
-form input {
-    width: 100%;
+#queryForm input {
     font-size: 22px;
     padding: 5px 12px;
     font-family: 'Hind Vadodara', sans-serif !important;

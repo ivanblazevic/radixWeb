@@ -10,7 +10,7 @@ body {
     margin: 0;
 }
 
-.mat-drawer-container {
+.result-container {
     padding: 0.5rem;
     background: white;
 }
@@ -27,4 +27,12 @@ body {
     position: -webkit-sticky; /* For macOS/iOS Safari */
     bottom: 0; /* Sets the sticky toolbar to be on top */
     z-index: 1000; /* Ensure that your app's content doesn't overlap the toolbar */
+}
+
+mat-sidenav {
+    width: 30%;
+}
+
+.full-width {
+    width: 100%;
 }

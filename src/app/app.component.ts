@@ -17,11 +17,13 @@ export class AppComponent implements OnInit {
   radixUrl = "https://radix.local:8009";
   items = [];
   info: Info = { title: null };
+  showSettings: boolean = false;
   mobileQuery = {
     matches: true
   }
   youTube: YouTube;
   resultHeaderTitle: string;
+  show = "youtube";
 
   form = new FormGroup({
     queryInput: new FormControl()
@@ -41,9 +43,8 @@ export class AppComponent implements OnInit {
 
     const lastQuery = localStorage.getItem('query');
     if (lastQuery) {
-      this.info.title = lastQuery;
       this.searchYoutube(this.info.title);
-      this.form.get("queryInput").setValue(this.info.title);
+      this.form.get("queryInput").setValue(lastQuery);
     }
 
     this.sharedService.getInfo().subscribe(res => {
@@ -51,6 +52,7 @@ export class AppComponent implements OnInit {
       if (!this.info.title) {
         this.info.title = "No title info";
       }
+      console.log(res);
     });
     
     this.form.get("queryInput").valueChanges.pipe(debounce(() => timer(1000))).subscribe(
@@ -58,6 +60,10 @@ export class AppComponent implements OnInit {
         this.searchYoutube(value);
       }
     );
+  }
+
+  onMenuClick(show: string): void {
+    this.show = show;
   }
 
   searchYoutube(query: string): void{
