@@ -22,7 +22,7 @@ enum Plugin {
 })
 export class AppComponent implements OnInit {
 
-  version = "0.11";
+  version = "0.12";
   radixUrl = "https://radix.local:8009";
   items = [];
   info: Info = { title: null, volume: 0, version: "" };
