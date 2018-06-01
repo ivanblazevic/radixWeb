@@ -8,6 +8,7 @@ import { SharedService, Info } from './shared/shared.service';
 import { FormControl, FormGroup } from '@angular/forms';
 
 import * as compareVersions from "compare-versions";
+import { MatSnackBar } from '@angular/material';
 
 enum Plugin {
   Stations,
@@ -23,7 +24,7 @@ enum Plugin {
 export class AppComponent implements OnInit {
 
   version = "0.12";
-  radixUrl = "https://radix.local:8009";
+  radixUrl = "";
   items = [];
   info: Info = { title: null, volume: 0, version: "" };
   showSettings: boolean = false;
@@ -45,8 +46,10 @@ export class AppComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private sharedService: SharedService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    public snackBar: MatSnackBar
   ) {
+    this.radixUrl = this.sharedService.host;
     this.youTube = new YouTube();
     this.youTube.setKey('AIzaSyB1OOSpTREs85WUMvIgJvLTZKye4BVsoFU');
   }
@@ -66,7 +69,8 @@ export class AppComponent implements OnInit {
         this.info.title = "No title info";
       }
       this.checkNewVersion(this.info.version);
-      console.log(res);
+    }, err => {
+      this.snackBar.open(err.message, "Close");
     });
     
     this.form.get("queryInput").valueChanges.pipe(debounce(() => timer(1000))).subscribe(
@@ -84,7 +88,6 @@ export class AppComponent implements OnInit {
     );
 
     this.init(this.plugin);
-    this.saveConfig();
   }
 
   init(plugin: Plugin): void {
@@ -177,7 +180,7 @@ export class AppComponent implements OnInit {
       this.http.get(this.radixUrl + "/youtube?id=" + value.id.videoId).subscribe(res => {
         this.info.title = value.snippet.title
       }, err => {
-        alert(JSON.stringify(err));
+        this.snackBar.open(err.message, "Close");
       })
     }
 
@@ -185,7 +188,7 @@ export class AppComponent implements OnInit {
       this.http.get(this.radixUrl + "/play?url=" + value.url + "&title=" + value.title).subscribe(res => {
         this.info.title = value.title
       }, err => {
-        alert(JSON.stringify(err));
+        this.snackBar.open(JSON.stringify(err.message));
       })
     }
 
@@ -193,7 +196,7 @@ export class AppComponent implements OnInit {
       this.http.get(this.radixUrl + "/gplay?id=" + value.id).subscribe(res => {
         this.info.title = value.artist + " - " +  value.title
       }, err => {
-        alert(JSON.stringify(err));
+        this.snackBar.open(err.message, "Close");
       })
     }
 
@@ -207,7 +210,7 @@ export class AppComponent implements OnInit {
     this.sharedService.volume(this.info.volume).subscribe(res => {
       console.log(res);
     }, err => {
-      alert(JSON.stringify(err));
+      this.snackBar.open(err.message, "Close");
     })
   }
 
@@ -215,7 +218,7 @@ export class AppComponent implements OnInit {
     this.sharedService.update().subscribe(res => {
       console.log(res);
     }, err => {
-      alert(JSON.stringify(err));
+      this.snackBar.open(err.message, "Close");
     })
   }
 
@@ -226,7 +229,7 @@ export class AppComponent implements OnInit {
     }).subscribe(res => {
       console.log(res);
     }, err => {
-      alert(JSON.stringify(err));
+      this.snackBar.open(err.message, "Close");
     })
   }
 

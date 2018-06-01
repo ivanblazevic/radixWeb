@@ -12,7 +12,8 @@ import {
   MatCardModule,
   MatFormFieldModule,
   MatInputModule,
-  MatSliderModule
+  MatSliderModule,
+  MatSnackBarModule
 } from '@angular/material';
 import { SharedService } from './shared.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -32,6 +33,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatInputModule,
     MatSliderModule,
+    MatSnackBarModule,
     ReactiveFormsModule
   ],
   exports: [
@@ -47,6 +49,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatInputModule,
     MatSliderModule,
+    MatSnackBarModule,
     ReactiveFormsModule
   ],
   providers: [SharedService],

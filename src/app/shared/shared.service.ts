@@ -16,7 +16,9 @@ export interface Config {
 @Injectable()
 export class SharedService {
 
-  host: string = "https://radix.local:8009";
+  //host: string = "https://radix.local:8009";
+  //host: string = "http://localhost:8080";
+  host: string = "";
   dirble: string = "http://api.dirble.com/v2/search?query=";
   dirbleToken: string = "c9ddafa9add4a6578cb542fa4e";
   favoritesHost: string = "https://radix-83cd.restdb.io/rest/stations";
@@ -24,7 +26,7 @@ export class SharedService {
   constructor(private http: HttpClient) { }
 
   getInfo(): Observable<Info> {
-    return this.http.get<Info>(this.host);
+    return this.http.get<Info>(this.host + "/info");
   }
 
   getFavorites(): Observable<any> {

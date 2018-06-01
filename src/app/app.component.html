@@ -26,17 +26,34 @@
 
   <mat-sidenav-content>
     <div class="result-container" *ngIf="!showSettings">
-      <p *ngIf="items.length == 0" style="margin-bottom: 10px">{{ resultHeaderTitle }}</p>
-      <mat-card [ngClass]="{ active: item.isActive }" (click)="play(item)" *ngFor="let item of items">
-        <div>
-            <img *ngIf="isYouTube()" style="width: 40%;box-sizing: border-box;display: inline-block;" [src]="item.snippet.thumbnails.medium.url" alt="">
-            <div style="display: inline-block;vertical-align: top;width: 58%;box-sizing: border-box;">
-              <span *ngIf="isYouTube()">{{ item.snippet.title }}</span>
-              <div *ngIf="isRadio()"><mat-icon>radio</mat-icon> <span style="vertical-align: super;">{{ item.title }}</span></div>
-              <div *ngIf="isGoogleMusic()"><mat-icon>radio</mat-icon> <span style="vertical-align: super;">{{ item.artist }} {{ item.title }}</span></div>
-            </div>
+
+      <p *ngIf="items.length == 0 && !isRadio()" style="margin-bottom: 10px">{{ resultHeaderTitle }}</p>
+
+      <div *ngIf="items.length > 0;else placeholder">
+          <mat-card [ngClass]="{ active: item.isActive }" (click)="play(item)" *ngFor="let item of items">
+              <div>
+                  <img *ngIf="isYouTube()" style="width: 40%;box-sizing: border-box;display: inline-block;" [src]="item.snippet.thumbnails.medium.url" alt="">
+                  <div style="display: inline-block;vertical-align: top;width: 58%;box-sizing: border-box;">
+                    <span *ngIf="isYouTube()">{{ item.snippet.title }}</span>
+                    <div *ngIf="isRadio()"><mat-icon>radio</mat-icon> <span style="vertical-align: super;">{{ item.title }}</span></div>
+                    <div *ngIf="isGoogleMusic()"><mat-icon>radio</mat-icon> <span style="vertical-align: super;">{{ item.artist }} {{ item.title }}</span></div>
+                  </div>
+              </div>
+            </mat-card>
+      </div>
+
+      <ng-template #placeholder>
+        <div *ngIf="isRadio()">
+            <mat-card *ngFor="let item of [0,1,2,3,4,5,6,7]">
+                <div>
+                    <div style="display: inline-block;vertical-align: top;width: 100%;box-sizing: border-box;">
+                      <div class="content-placeholder" style="width: 100%"><span style="vertical-align: super;">&nbsp;</span></div>
+                    </div>
+                </div>
+              </mat-card>
         </div>
-      </mat-card>
+      </ng-template>
+
     </div>
     <div class="result-container" *ngIf="showSettings" style="height: 500px">
 
