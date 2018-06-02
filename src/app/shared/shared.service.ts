@@ -9,16 +9,17 @@ export interface Info extends Config {
 }
 
 export interface Config {
-  googleUsername?: string,
-  googlePassword?: string
+  google_username?: string,
+  google_password?: string,
+  dirble_token?: string
 }
 
 @Injectable()
 export class SharedService {
 
   //host: string = "https://radix.local:8009";
-  //host: string = "http://localhost:8080";
-  host: string = "";
+  host: string = "http://localhost:8080";
+  //host: string = "";
   dirble: string = "http://api.dirble.com/v2/search?query=";
   dirbleToken: string = "c9ddafa9add4a6578cb542fa4e";
   favoritesHost: string = "https://radix-83cd.restdb.io/rest/stations";
@@ -40,8 +41,7 @@ export class SharedService {
   }
 
   searchStations(query: string): Observable<any> {
-    const endpoint: string = this.dirble + query + "&token=" + this.dirbleToken;
-    return this.http.post<Info>(endpoint, {});
+    return this.http.get<Info>(this.host + "/search?query=" + query);
   }
 
   searchGoogleMusic(query: string): Observable<any> {

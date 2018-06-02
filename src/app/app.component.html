@@ -72,10 +72,13 @@
         <mat-slider [max]="100" [min]="0" [step]="5" (change)="onVolume()" name="volume" class="full-width" [(ngModel)]="info.volume"></mat-slider>
 
         <mat-form-field class="full-width">
-          <input matInput placeholder="Google Username" [value]="info.googleUsername">
+          <input name="google_username" matInput placeholder="Google Username" [(ngModel)]="info.google_username">
         </mat-form-field>
         <mat-form-field class="full-width">
-          <input matInput placeholder="Google Password" [value]="password">
+          <input name="google_password" matInput placeholder="Google Password" [(ngModel)]="info.google_password">
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input name="dirble_token" matInput placeholder="Dirble Token" [(ngModel)]="info.dirble_token">
         </mat-form-field>
       </form>
 

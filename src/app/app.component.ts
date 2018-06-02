@@ -158,7 +158,7 @@ export class AppComponent implements OnInit {
       return;
     }
     this.sharedService.searchStations(query).subscribe(res => {
-      console.log(res);
+      this.items = <any[]>res;
     })
   }
 
@@ -223,11 +223,14 @@ export class AppComponent implements OnInit {
   }
 
   saveConfig(): void {
-    this.sharedService.saveConfig({ 
-      googleUsername: "faciron@gmail.com",
-      googlePassword: "$$$$sev82bsv1234"
-    }).subscribe(res => {
-      console.log(res);
+    console.log(this.info);
+    var config = {
+      google_password: this.info.google_password,
+      google_username: this.info.google_username,
+      dirble_token: this.info.dirble_token
+    }
+    this.sharedService.saveConfig(this.info).subscribe(res => {
+      this.snackBar.open("Saved!", "Close");
     }, err => {
       this.snackBar.open(err.message, "Close");
     })
