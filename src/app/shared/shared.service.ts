@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 export interface Info extends Config {
   title: string,
@@ -16,15 +18,13 @@ export interface Config {
 
 @Injectable()
 export class SharedService {
-
-  //host: string = "https://radix.local:8009";
-  host: string = "http://localhost:8080";
-  //host: string = "";
+  host: string = environment.host;
   dirble: string = "http://api.dirble.com/v2/search?query=";
-  dirbleToken: string = "c9ddafa9add4a6578cb542fa4e";
   favoritesHost: string = "https://radix-83cd.restdb.io/rest/stations";
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    console.log("Host used: " + this.host)
+  }
 
   getInfo(): Observable<Info> {
     return this.http.get<Info>(this.host + "/info");
@@ -58,6 +58,14 @@ export class SharedService {
 
   volume(volume: number): Observable<Info> {
     return this.http.get<Info>(this.host + "/volume?set=" + volume);
+  }
+
+  volumeByPercentage(volume: number): Observable<Info> {
+    return this.getInfo().pipe(
+      map(i => i.volume),
+      tap(a => console.log(a)),
+      switchMap(r => this.http.get<Info>(this.host + "/volume?set=" + (r + volume)))
+    );
   }
 
   update(): Observable<any> {

@@ -1,33 +1,40 @@
 <mat-toolbar color="primary" class="app-toolbar">
-  <button mat-icon-button (click)="snav.toggle()">
+
+  <button [matMenuTriggerFor]="leftMenu" mat-icon-button>
     <mat-icon>menu</mat-icon>
   </button>
+
+  <mat-menu #leftMenu="matMenu">
+    <button mat-menu-item (click)="showSettings = true"><mat-icon>settings</mat-icon>Settings</button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="increaseVolumeBy(25)"><mat-icon>volume_up</mat-icon>+25%</button>
+    <button mat-menu-item (click)="increaseVolumeBy(-25)"><mat-icon>volume_down</mat-icon>-25%</button>
+  </mat-menu>
 
   <form id="queryForm" [formGroup]="form">
     <input placeholder="Search..." formControlName="queryInput" />
   </form>
 
-  <button style="position: absolute;right: 10px;" mat-icon-button (click)="snav.toggle()">
+  <button [matMenuTriggerFor]="menu" style="position: absolute;right: 10px;" mat-icon-button>
     <mat-icon *ngIf="isYouTube()">account_circle</mat-icon>
     <mat-icon *ngIf="isRadio()">radio</mat-icon>
     <mat-icon *ngIf="isGoogleMusic()">library_music</mat-icon>
   </button>
+
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="init(Plugin.Stations)"><mat-icon>radio</mat-icon>Stations</button>
+    <button mat-menu-item (click)="init(Plugin.YouTube)"><mat-icon>account_circle</mat-icon>YouTube</button>
+    <button mat-menu-item (click)="init(Plugin.GoogleMusic)"><mat-icon>library_music</mat-icon>GoogleMusic</button>
+  </mat-menu>
+
 </mat-toolbar>
 
-<mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 0 : 0">
-  <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
-    <mat-nav-list>
-      <a mat-list-item (click)="init(Plugin.Stations);snav.toggle()">Stations</a>
-      <a mat-list-item (click)="init(Plugin.YouTube);snav.toggle()">YouTube</a>
-      <a mat-list-item (click)="init(Plugin.GoogleMusic);snav.toggle()">GoogleMusic</a>
-      <a mat-list-item (click)="showSettings = true;snav.toggle()">Settings</a>
-    </mat-nav-list>
-  </mat-sidenav>
-
-  <mat-sidenav-content>
     <div class="result-container" *ngIf="!showSettings">
 
-      <p *ngIf="items.length == 0 && !isRadio()" style="margin-bottom: 10px">{{ resultHeaderTitle }}</p>
+      <div class="plugin-icon-container">
+          <img *ngIf="items.length == 0 && isYouTube()" src="assets/yt.png" alt="You Tube">
+          <img *ngIf="items.length == 0 && isGoogleMusic()" src="assets/gm.png" alt="Google Music">
+      </div>
 
       <div *ngIf="items.length > 0;else placeholder">
           <mat-card [ngClass]="{ active: item.isActive }" (click)="play(item)" *ngFor="let item of items">
@@ -85,8 +92,6 @@
       <button (click)="saveConfig()" mat-raised-button>Save</button>
 
     </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
 
 <div style="position: fixed;bottom: 0;width:100%;z-index: 100">
   <mat-toolbar color="primary" class="info-toolbar">

@@ -23,3 +23,18 @@ mat-card {
 mat-card.active {
     background: gainsboro;
 }
+
+.plugin-icon-container {
+    display: block;
+    width: 60%;
+    position: fixed;
+    margin: auto 0;
+    top: 20%;
+    left: 50%;
+    margin-left: -30%;
+}
+
+.plugin-icon-container img {
+    width: 100%;
+    filter: opacity(.2) grayscale(100%);
+}

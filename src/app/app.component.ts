@@ -32,7 +32,6 @@ export class AppComponent implements OnInit {
     matches: true
   }
   youTube: YouTube;
-  resultHeaderTitle: string;
   plugin: Plugin;
   Plugin = Plugin;
 
@@ -97,14 +96,12 @@ export class AppComponent implements OnInit {
     this.items = [];
     switch(plugin) {
       case Plugin.Stations: {
-        this.resultHeaderTitle = "Getting favorites...";
         this.sharedService.getFavorites().subscribe(res => {
           this.items = res;
         });
         break;
       }
       case Plugin.YouTube: {
-        this.resultHeaderTitle = "Searching...";
         this.searchYoutube(this.form.get("queryInput").value);
         break;
       }
@@ -125,11 +122,8 @@ export class AppComponent implements OnInit {
 
   searchYoutube(query: string): void {
     if (!query) {
-      this.resultHeaderTitle = "Type something...";
       return;
     }
-
-    this.resultHeaderTitle = "Searching...";
 
     const o = Observable.create(observer => {
       this.youTube.search(query.replace(" ", "+"), 50, function (error, result) {
@@ -214,6 +208,14 @@ export class AppComponent implements OnInit {
     })
   }
 
+  increaseVolumeBy(percentage: number): void {
+    this.sharedService.volumeByPercentage(percentage).subscribe(res => {
+      console.log(res);
+    }, err => {
+      this.snackBar.open(err.message, "Close");
+    })
+  }
+
   onUpdate(): void {
     this.sharedService.update().subscribe(res => {
       console.log(res);
@@ -223,7 +225,6 @@ export class AppComponent implements OnInit {
   }
 
   saveConfig(): void {
-    console.log(this.info);
     var config = {
       google_password: this.info.google_password,
       google_username: this.info.google_username,
