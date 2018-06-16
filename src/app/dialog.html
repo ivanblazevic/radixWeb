@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>Hi!</h1>
+<div mat-dialog-content>
+  <p>Enter title and stream url?</p>
+  <mat-form-field>
+    <input matInput [(ngModel)]="data.title" placeholder="Title">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [(ngModel)]="data.url" placeholder="Url">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Play</button>
+</div>

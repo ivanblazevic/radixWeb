@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { map, switchMap, tap } from 'rxjs/operators';
 
 export interface Info extends Config {
+  id?: string,
   title: string,
   volume: number,
   version: string
@@ -36,8 +37,40 @@ export class SharedService {
         'x-apikey': '5ae89d7625a622ae4d528762'
       })
     };
+
+    const compare = (a,b) => {
+      if (a.title < b.title)
+        return -1;
+      if (a.title > b.title)
+        return 1;
+      return 0;
+    }
+
     const endpoint = this.favoritesHost;
-    return this.http.get<Info>(endpoint, httpOptions);
+    return this.http.get<any>(endpoint, httpOptions).pipe(map(m => {
+      return m.sort(compare)
+    }));
+  }
+
+  addFavorites(url: string, title: string): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'x-apikey': '5ae89d7625a622ae4d528762'
+      })
+    };
+    const endpoint = this.favoritesHost;
+    return this.http.post<Info>(endpoint, { url: url, title: title }, httpOptions);
+  }
+
+  removeFavorites(id: string): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'x-apikey': '5ae89d7625a622ae4d528762',
+        "X-HTTP-Method-Override": "DELETE"
+      })
+    };
+    const endpoint = this.favoritesHost;
+    return this.http.post<Info>(endpoint + "/" + id, null, httpOptions);
   }
 
   searchStations(query: string): Observable<any> {

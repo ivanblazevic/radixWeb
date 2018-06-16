@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as YouTube from 'youtube-node';
 import { Observable } from 'rxjs/Observable';
@@ -6,9 +6,9 @@ import { debounce } from 'rxjs/operators';
 import { timer } from 'rxjs/observable/timer';
 import { SharedService, Info } from './shared/shared.service';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatSnackBar, MatDialog, MatDialogRef, MAT_DIALOG_DATA  } from '@angular/material';
 
 import * as compareVersions from "compare-versions";
-import { MatSnackBar } from '@angular/material';
 
 enum Plugin {
   Stations,
@@ -46,7 +46,8 @@ export class AppComponent implements OnInit {
     private http: HttpClient,
     private sharedService: SharedService,
     private ngZone: NgZone,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public dialog: MatDialog
   ) {
     this.radixUrl = this.sharedService.host;
     this.youTube = new YouTube();
@@ -120,6 +121,16 @@ export class AppComponent implements OnInit {
     return this.plugin == Plugin.GoogleMusic;
   }
 
+  showCustom() {
+    let dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '250px',
+      data: { title: "", url: "" }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.play(result);
+    });
+  }
+
   searchYoutube(query: string): void {
     if (!query) {
       return;
@@ -168,6 +179,9 @@ export class AppComponent implements OnInit {
   play(value: any): void {
     this.items.forEach(i => i.isActive = false); // reset all active
     value.isActive = true;
+    if (value._id) {
+      this.info.id = value._id;
+    }
     this.info.title = "In progress..."
 
     if (this.isYouTube()) {
@@ -237,11 +251,35 @@ export class AppComponent implements OnInit {
     })
   }
 
+  addFavorites(url: string, title: string): void {
+    this.sharedService.addFavorites(url, title).subscribe(res => console.log);
+  }
+
+  removeFavorites(id: string): void {
+    this.sharedService.removeFavorites(id).subscribe(res => console.log);
+  }
+
   private checkNewVersion(currentVersion: string): void {
     this.http.get("https://api.github.com/repos/ivanblazevic/radix/releases/latest").subscribe(res => {
       this.newVersion = res["tag_name"];
       this.updateAvailable = compareVersions(this.newVersion, currentVersion);
     })
+  }
+
+}
+
+@Component({
+  selector: 'dialog-overview-example-dialog',
+  templateUrl: 'dialog.html',
+})
+export class DialogOverviewExampleDialog {
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: any) { }
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 
 }

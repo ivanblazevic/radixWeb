@@ -13,10 +13,12 @@ import {
   MatFormFieldModule,
   MatInputModule,
   MatSliderModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatDialogModule
 } from '@angular/material';
 import { SharedService } from './shared.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DialogOverviewExampleDialog } from '../app.component';
 
 @NgModule({
   imports: [
@@ -34,6 +36,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatInputModule,
     MatSliderModule,
     MatSnackBarModule,
+    MatDialogModule,
     ReactiveFormsModule
   ],
   exports: [
@@ -50,9 +53,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatInputModule,
     MatSliderModule,
     MatSnackBarModule,
+    MatDialogModule,
     ReactiveFormsModule
   ],
   providers: [SharedService],
-  declarations: []
+  entryComponents: [DialogOverviewExampleDialog],
+  declarations: [DialogOverviewExampleDialog]
 })
 export class SharedModule { }

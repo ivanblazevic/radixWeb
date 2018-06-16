@@ -25,6 +25,7 @@
     <button mat-menu-item (click)="init(Plugin.Stations)"><mat-icon>radio</mat-icon>Stations</button>
     <button mat-menu-item (click)="init(Plugin.YouTube)"><mat-icon>account_circle</mat-icon>YouTube</button>
     <button mat-menu-item (click)="init(Plugin.GoogleMusic)"><mat-icon>library_music</mat-icon>GoogleMusic</button>
+    <button mat-menu-item (click)="showCustom()"><mat-icon>add</mat-icon>Custom</button>
   </mat-menu>
 
 </mat-toolbar>
@@ -48,6 +49,7 @@
               </div>
             </mat-card>
       </div>
+      <div style="height: 60px;"></div>
 
       <ng-template #placeholder>
         <div *ngIf="isRadio()">
@@ -90,8 +92,12 @@
       </form>
 
       <button (click)="saveConfig()" mat-raised-button>Save</button>
-
     </div>
+
+    <mat-menu #infoMenu="matMenu">
+      <button mat-menu-item (click)="addFavorites(info.playing, info.title)"><mat-icon>settings</mat-icon>Add Favorites</button>
+      <button mat-menu-item (click)="removeFavorites(info.id)"><mat-icon>settings</mat-icon>Remove Favorites</button>
+    </mat-menu>
 
 <div style="position: fixed;bottom: 0;width:100%;z-index: 100">
   <mat-toolbar color="primary" class="info-toolbar">
@@ -101,5 +107,8 @@
     <a (click)="repeat()" style="">
       <mat-icon style="vertical-align: middle;">replay</mat-icon>
     </a>
+    <a [matMenuTriggerFor]="infoMenu">
+        <mat-icon style="vertical-align: middle;">reorder</mat-icon>
+      </a>
   </mat-toolbar>
 </div>
