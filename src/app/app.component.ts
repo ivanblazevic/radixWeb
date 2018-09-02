@@ -260,8 +260,10 @@ export class AppComponent implements OnInit {
   }
 
   private checkNewVersion(currentVersion: string): void {
-    this.http.get("https://api.github.com/repos/ivanblazevic/radix/releases/latest").subscribe(res => {
-      this.newVersion = res["tag_name"];
+    // TODO: move to service
+    this.http.get(this.sharedService.host + "/available_version").subscribe(res => {
+      this.newVersion = res;
+      console.log(this.newVersion)
       this.updateAvailable = compareVersions(this.newVersion, currentVersion);
     })
   }

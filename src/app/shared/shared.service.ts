@@ -7,6 +7,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 export interface Info extends Config {
   id?: string,
   title: string,
+  playing?: string,
   volume: number,
   version: string
 }
@@ -24,7 +25,8 @@ export class SharedService {
   favoritesHost: string = "https://radix-83cd.restdb.io/rest/stations";
 
   constructor(private http: HttpClient) {
-    console.log("Host used: " + this.host)
+    console.log("Host used: " + window.location.hostname)
+    this.host = "http://" + window.location.hostname;
   }
 
   getInfo(): Observable<Info> {

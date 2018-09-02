@@ -66,8 +66,7 @@
     </div>
     <div class="result-container" *ngIf="showSettings" style="height: 500px">
 
-      <p><b>App version </b>{{ version }}</p>
-      <p><b>Server version </b>{{ info.version }}</p>
+      <p><b>System version </b>{{ info.version }}</p>
 
       <div *ngIf="updateAvailable">
         <p style="color: red">New update available! Version {{ newVersion }}</p>
